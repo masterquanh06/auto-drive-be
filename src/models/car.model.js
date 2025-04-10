@@ -1,14 +1,24 @@
-import pool from '../config/db.js';
+import pool from '../config/db.js'; // file db.js chứa connect PostgreSQL
+
+// Model cho bảng cars
+
 
 export const getAllCars = async () => {
     const result = await pool.query('SELECT * FROM cars');
     return result.rows;
 };
 
-export const createCar = async (brand, model, price) => {
+export const getCarbyId = async (id) => {
+    const result = await pool.query('SELECT * FROM cars WHERE id = $1', [id]);
+    return result.rows[0];
+}; 
+
+
+export const createCar = async ({ brand, model, price }) => {
     const result = await pool.query(
         'INSERT INTO cars (brand, model, price) VALUES ($1, $2, $3) RETURNING *',
         [brand, model, price]
     );
     return result.rows[0];
 };
+

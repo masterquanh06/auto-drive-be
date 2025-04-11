@@ -1,4 +1,4 @@
-import { createCar, getAllCars , getCarbyId } from '../models/car.model.js';
+import { createCar, deleteCarById, getAllCars, getCarbyId, updateCarById } from '../models/car.model.js';
 
 // Lấy all xe
 export const getCars = async (req, res) => {
@@ -11,7 +11,7 @@ export const getCars = async (req, res) => {
 };
 
 // lấy xe theo id 
-export const getCar = async (req, res) => { 
+export const getCar = async (req, res) => {
   const { id } = req.params;
   try {
     const car = await getCarbyId(id);
@@ -34,3 +34,32 @@ export const addCar = async (req, res) => {
     res.status(500).json({ error: 'Failed to add car' });
   }
 };
+
+// update car
+export const updateCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { brand, model, price } = req.body;
+    const updatedCar = await updateCarById(id, brand, model, price);
+    if (!updatedCar) {
+      return res.status(404).json({ message: 'Car not found' });
+    }
+    res.json(updatedCar);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// delete car
+export const deleteCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCar = await deleteCarById(id);
+    if (!deletedCar) {
+      return res.status(404).json({ message: 'Car not found' });
+    }
+    res.json(deletedCar);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

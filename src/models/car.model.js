@@ -11,7 +11,7 @@ export const getAllCars = async () => {
 export const getCarbyId = async (id) => {
     const result = await pool.query('SELECT * FROM cars WHERE id = $1', [id]);
     return result.rows[0];
-}; 
+};
 
 
 export const createCar = async ({ brand, model, price }) => {
@@ -21,4 +21,18 @@ export const createCar = async ({ brand, model, price }) => {
     );
     return result.rows[0];
 };
+export const updateCarById = async (id, brand, model, price) => {
+    const result = await pool.query(
+        `UPDATE cars
+       SET brand = $1, model = $2, price = $3
+       WHERE id = $4
+       RETURNING *`,
+        [brand, model, price, id]
+    );
+    return result.rows[0];
+};
 
+export const deleteCarById = async (id) => { 
+    const result = await pool.query('DELETE FROM cars WHERE id = $1 RETURNING *', [id]);
+    return result.rows[0];
+}

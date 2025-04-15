@@ -1,11 +1,14 @@
 import express from 'express';
-import { addCar, deleteCar, getCar, getCars, updateCar } from '../controllers/car.controller.js';
+import { addCar, deleteCar, getAllCars, getCar, updateCar } from '../controllers/car.controller.js';
+import { authenticateToken, authorizeAdmin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getCars);
-router.post('/', addCar);
+router.get('/', getAllCars);
 router.get('/:id', getCar);
-router.put('/:id', updateCar);
-router.delete('/:id', deleteCar)
+router.post('/', authenticateToken, authorizeAdmin, addCar);
+router.put('/:id', authenticateToken, authorizeAdmin, updateCar);
+router.delete('/:id', authenticateToken, authorizeAdmin, deleteCar);
 export default router;
+
+

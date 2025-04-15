@@ -1,13 +1,35 @@
 import bcrypt from 'bcrypt';
-import { createUser } from "../models/user.model.js";
+import jwt from 'jsonwebtoken';
+import { createUser, findUserByUserName } from "../models/user.model.js";
 export const register = async (req, res) => {
     const { username, password, email } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await createUser(username, hashedPassword, email, "user");
+        const user = await createUser(username, hashedPassword, email, "");
         res.status(201).json({ message: "User created", user });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
+
+export const login = async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = await findUserByUserName(username);
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) {
+            return res.status(400).json({ message: "Invalid password" });
+        }
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_ACCESS_KEY, {
+            expiresIn: "1h",
+        });
+        res.json({ token });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
 

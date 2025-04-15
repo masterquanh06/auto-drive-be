@@ -1,9 +1,9 @@
-import { createCar, deleteCarById, getAllCars, getCarbyId, updateCarById } from '../models/car.model.js';
+import { createCar, deleteCarById, getCarbyId, getCars, updateCarById } from '../models/car.model.js';
 
 // Lấy all xe
-export const getCars = async (req, res) => {
+export const getAllCars = async (req, res) => {
   try {
-    const cars = await getAllCars();
+    const cars = await getCars();
     res.json(cars);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch cars' });

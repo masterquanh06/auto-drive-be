@@ -3,7 +3,7 @@ import pool from '../config/db.js'; // file db.js chứa connect PostgreSQL
 // Model cho bảng cars
 
 
-export const getAllCars = async () => {
+export const getCars = async () => {
     const result = await pool.query('SELECT * FROM cars');
     return result.rows;
 };
@@ -32,7 +32,7 @@ export const updateCarById = async (id, brand, model, price) => {
     return result.rows[0];
 };
 
-export const deleteCarById = async (id) => { 
+export const deleteCarById = async (id) => {
     const result = await pool.query('DELETE FROM cars WHERE id = $1 RETURNING *', [id]);
     return result.rows[0];
 }

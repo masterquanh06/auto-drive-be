@@ -9,6 +9,24 @@ export const addToCart = async (userId, CarId, quantity = 1) => {
     return result.rows[0];
 }
 
+export const getCartByUser = async (userId) => {
+    const result = await pool.query(`
+    SELECT 
+      cart.id, 
+      cart.user_id, 
+      cart.car_id, 
+      cars.brand, 
+      cars.model, 
+      cars.price, 
+      cart.quantity
+    FROM cart
+    JOIN cars ON cart.car_id = cars.id
+    WHERE cart.user_id = $1
+  `, [userId]);
+
+    return result.rows;
+};
+
 export const getCartByUserId = async (userId) => {
     const result = await pool.query(
         `SELECT cart.id as cart_id, cars.*, cart.quantity
@@ -29,3 +47,7 @@ export const deleteCartItem = async (cartItemId, userId) => {
     );
     return result.rows[0];
 }
+
+export const clearCartByUser = async (userId) => {
+    await pool.query('DELETE FROM cart WHERE user_id = $1', [userId]);
+};

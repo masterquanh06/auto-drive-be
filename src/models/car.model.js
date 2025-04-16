@@ -1,4 +1,4 @@
-import pool from '../config/db.js'; // file db.js chứa connect PostgreSQL
+import pool from '../config/db.js';
 
 // Model cho bảng cars
 
@@ -36,3 +36,31 @@ export const deleteCarById = async (id) => {
     const result = await pool.query('DELETE FROM cars WHERE id = $1 RETURNING *', [id]);
     return result.rows[0];
 }
+
+export const searchCarsModel = async ({ brand, model, priceMin, priceMax }) => {
+    let query = 'SELECT * FROM cars WHERE 1=1';
+    const values = [];
+
+    if (brand) {
+        values.push(`%${brand}%`);
+        query += ` AND brand ILIKE $${values.length}`;
+    }
+
+    if (model) {
+        values.push(`%${model}%`);
+        query += ` AND model ILIKE $${values.length}`;
+    }
+
+    if (priceMin) {
+        values.push(priceMin);
+        query += ` AND price >= $${values.length}`;
+    }
+
+    if (priceMax) {
+        values.push(priceMax);
+        query += ` AND price <= $${values.length}`;
+    }
+
+    const result = await pool.query(query, values);
+    return result.rows;
+};

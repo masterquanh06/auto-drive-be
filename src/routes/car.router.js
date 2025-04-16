@@ -9,6 +9,7 @@ router.get('/:id', getCar);
 router.post('/', authenticateToken, authorizeAdmin, addCar);
 router.put('/:id', authenticateToken, authorizeAdmin, updateCar);
 router.delete('/:id', authenticateToken, authorizeAdmin, deleteCar);
+router.get('/search', searchCars);
 export default router;
 
 

@@ -63,3 +63,14 @@ export const deleteCar = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+// search car
+export const searchCars = async (req, res) => {
+  try {
+    const result = await searchCarsModel(req.query);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to search cars' });
+  }
+};

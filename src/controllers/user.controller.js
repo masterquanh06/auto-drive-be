@@ -23,7 +23,7 @@ export const login = async (req, res) => {
         if (!valid) {
             return res.status(400).json({ message: "Invalid password" });
         }
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_ACCESS_KEY, {
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role, avatar: user.avatar, email: user.email }, process.env.JWT_ACCESS_KEY, {
             expiresIn: "1h",
         });
         res.json({ token });
@@ -33,3 +33,7 @@ export const login = async (req, res) => {
     }
 }
 
+export const getMe = (req, res) => {
+    const { id, username, avatar, email, role } = req.user;
+    res.json({ id, username, avatar, email, role }); // Trả về user info đã decode từ token
+};

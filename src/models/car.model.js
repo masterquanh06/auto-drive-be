@@ -1,7 +1,5 @@
 import pool from '../config/db.js';
 
-// Model cho bảng cars
-
 
 export const getCars = async () => {
     const result = await pool.query('SELECT * FROM cars');
@@ -14,20 +12,20 @@ export const getCarbyId = async (id) => {
 };
 
 
-export const createCar = async ({ brand, model, price }) => {
+export const createCar = async ({ brand, model, price, avatar }) => {
     const result = await pool.query(
-        'INSERT INTO cars (brand, model, price) VALUES ($1, $2, $3) RETURNING *',
-        [brand, model, price]
+        'INSERT INTO cars (brand, model, price , avatar) VALUES ($1, $2, $3, $4) RETURNING *',
+        [brand, model, price, avatar]
     );
     return result.rows[0];
 };
-export const updateCarById = async (id, brand, model, price) => {
+export const updateCarById = async (id, brand, model, price, avatar) => {
     const result = await pool.query(
         `UPDATE cars
-       SET brand = $1, model = $2, price = $3
-       WHERE id = $4
+       SET brand = $1, model = $2, price = $3 , avatar = $4
+       WHERE id = $5
        RETURNING *`,
-        [brand, model, price, id]
+        [brand, model, price, id, avatar]
     );
     return result.rows[0];
 };

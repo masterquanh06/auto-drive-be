@@ -44,3 +44,16 @@ export const authMiddleware = (req, res, next) => {
         return res.status(403).json({ message: 'Token không hợp lệ' });
     }
 };
+
+export const register = async (req, res) => {
+    console.log(req.body); // Thêm dòng này
+    // ... phần còn lại
+    try {
+        // ... existing code ...
+    } catch (err) {
+        if (err.code === '23505') { 
+            return res.status(400).json({ error: 'Email đã tồn tại!' });
+        }
+        res.status(500).json({ error: err.message });
+    }
+}

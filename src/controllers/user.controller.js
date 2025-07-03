@@ -8,6 +8,9 @@ export const register = async (req, res) => {
         const user = await createUser(username, hashedPassword, email, "");
         res.status(201).json({ message: "User created", user });
     } catch (err) {
+        if (err.code === '23505') { // Postgres duplicate key
+            return res.status(400).json({ error: 'Email hoặc tên tài khoản đã tồn tại!' });
+        }
         res.status(500).json({ error: err.message });
     }
 };

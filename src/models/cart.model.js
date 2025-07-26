@@ -3,9 +3,20 @@ import pool from '../config/db.js';
 export const addToCart = async (userId, CarId, quantity = 1) => {
     const result = await pool.query(
         `INSERT INTO cart(user_id, car_id ,quantity)
-            VALUES ($1 , $2 , $3 ) RETURNING *`,
+            VALUES ($1 , $2 , $3, $4 ) RETURNING *`,
         [userId, CarId, quantity]
     )
+    return result.rows[0];
+}
+
+export const updateCartQuantity = async (quantity, cartId, userId) => {
+    const result = await pool.query(
+        `UPDATE cart
+        SET quantity = $1
+        WHERE id = $2 AND user_id = $3
+        RETURNING *`,
+        [quantity, cartId, userId]
+    );
     return result.rows[0];
 }
 
@@ -25,6 +36,13 @@ export const getCartByUser = async (userId) => {
   `, [userId]);
 
     return result.rows;
+};
+
+export const getCartById = async (cartId, user_id) => {
+    const result = await pool.query(`
+        SELECT * FROM cart WHERE id = $1 AND user_id = $2`,
+        [cartId, user_id]);
+    return result.rows[0];
 };
 
 export const getCartByUserId = async (userId) => {

@@ -105,12 +105,14 @@ export default pool;
 //     await pool.query(`
 //       CREATE TABLE IF NOT EXISTS cart (
 //         id SERIAL PRIMARY KEY,
-//         user_id INTEGER REFERENCES users(id),
+//         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 //         car_id INTEGER REFERENCES cars(id),
-//         quantity INTEGER NOT NULL
+//         quantity INTEGER NOT NULL,
+//         total_price NUMERIC(10,2) NOT NULL
 //       );
 //     `);
 //     console.log('Bảng "cart" đã được tạo.');
+
 //   } catch (error) {
 //     console.error("Lỗi khi tạo bảng:", error);
 //     process.exit(1);

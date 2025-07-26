@@ -20,7 +20,6 @@ app.use(express.json()); // Để đọc req.body
 
 //server.js
 
-
 app.use('/api/cars', carRoutes);
 app.use('/api/', userRoutes);
 app.use('/api/cart', cartRoutes);

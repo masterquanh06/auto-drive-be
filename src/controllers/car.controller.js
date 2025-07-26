@@ -1,11 +1,13 @@
 import {
   createCar,
   deleteCarById,
-  getCarbyId,
+  getCarById,
   getCars,
   searchCarsModel,
   updateCarById,
 } from "../models/car.model.js";
+import { extractPublicId } from '../utils/extractPublicId.js';
+import deleteImage from '../utils/deleteImage.js';
 
 // Lấy all xe
 export const getAllCars = async (req, res) => {
@@ -21,7 +23,7 @@ export const getAllCars = async (req, res) => {
 export const getCar = async (req, res) => {
   const { id } = req.params;
   try {
-    const car = await getCarbyId(id);
+    const car = await getCarById(id);
     if (!car) {
       return res.status(404).json({ error: "Car not found" });
     }
@@ -34,20 +36,22 @@ export const getCar = async (req, res) => {
 // addcar
 export const addCar = async (req, res) => {
   try {
-    const { brand, model, price } = req.body;
-
-    // Kiểm tra file upload
+    const { brand, model, price, mileage, fuel, transmission } = req.body;
+    console.log("req.body: ", req.body);
     const file = req.file;
     if (!file) {
       return res.status(400).json({ error: "Please upload a file" });
     }
-
-    const avatar = file.path; // Lấy đường dẫn file từ multer
-
-    // Tạo xe mới
-    const newCar = await createCar({ brand, model, price, avatar });
+    // Cloudinary trả về file.path hoặc file.url tuỳ config
+    const avatar = file.path || file.url;
+    const newCar = await createCar({
+      brand, model, price, avatar, mileage,description,
+      fuel,
+      transmission
+    });
     res.status(201).json(newCar);
   } catch (error) {
+    console.log("Error adding car:", error);
     res.status(500).json({ error: "Failed to add car" });
   }
 };
@@ -55,28 +59,56 @@ export const addCar = async (req, res) => {
 // update car
 export const updateCar = async (req, res) => {
   const { id } = req.params;
-  const avatar = req.file ? req.file.path : null;
-  const { brand, model, price } = req.body;
+  const getCar = await getCarById(id);
+  if (!getCar) {
+    return res.status(404).json({ error: "Car not found" });
+  }
+
+  const { brand, model, price,description, mileage, fuel, transmission } = req.body;
+  const file = req.file;
+
   try {
-    const updatedCar = await updateCarById(id, brand, model, price, avatar);
-    if (!updatedCar) {
-      return res.status(404).json({ error: "Car not found" });
+    let avatar = getCar.avatar;
+
+    // Nếu có file ảnh mới, thì xóa ảnh cũ trên Cloudinary
+    if (file) {
+      const publicId = extractPublicId(avatar);
+      if (publicId) {
+        await deleteImage(publicId);
+      }
+      avatar = file.path || file.url;
     }
+
+    const updatedCar = await updateCarById(id,brand,model,price,avatar,description,
+      mileage,
+      fuel,
+      transmission
+    );
+
     res.json(updatedCar);
   } catch (error) {
+    console.error("loi: " + error);
     res.status(500).json({ error: "Failed to update car" });
   }
 };
 
+
 // delete car
 export const deleteCar = async (req, res) => {
+  const { id } = req.params;
+  const getCar = await getCarbyId(id);
+  if (!getCar) {
+    return res.status(404).json({ error: "Car not found" });
+  }
   try {
-    const { id } = req.params;
-    const deletedCar = await deleteCarById(id);
-    if (!deletedCar) {
-      return res.status(404).json({ message: "Car not found" });
+    let avatar = getCar.avatar;
+    const publicId = extractPublicId(avatar);
+    console.log("publicId: ", publicId);
+    if (publicId) {
+      await deleteImage(publicId);
     }
-    res.json(deletedCar);
+    const deletedCar = await deleteCarById(id);
+    res.json("Xoá xe thành công: " + id);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

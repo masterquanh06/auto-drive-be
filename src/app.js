@@ -17,29 +17,7 @@ app.use(express.json()); // Để đọc req.body
 // route
 // ROUTES
 // SET STORAGE
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-})
 
-export var upload = multer({ storage: storage })
-app.get('/upload', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-})
-app.post('/uploadfile', upload.single('File'), (req, res, next) => {
-    const file = req.file
-    if (!file) {
-      const error = new Error('Please upload a file')
-      error.httpStatusCode = 400
-      return next(error)
-    }
-    res.send(file)
-  })
-  
 //server.js
 
 

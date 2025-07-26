@@ -13,4 +13,25 @@ export const findUserByUserName = async (username) => {
         [username]
     );
     return result.rows[0]
-}           
+}
+
+export const findUserById = async (id) => {
+    const result = await pool.query("SELECT * FROM users WHERE id = $1",
+        [id]
+    );
+    return result.rows[0];
+}
+
+export const updateUser = async (id, username, email, role) => {
+    const result = await pool.query("UPDATE users SET username = $2, email = $3, role = $4 WHERE id = $1 RETURNING *",
+        [id, username, email, role]
+    );
+    return result.rows[0];
+}
+
+export const deleteUser = async (id) => {
+    const result = await pool.query("DELETE FROM users WHERE id = $1",
+        [id]
+    );
+    return result.rows[0];
+}

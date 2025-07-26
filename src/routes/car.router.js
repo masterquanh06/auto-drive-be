@@ -17,7 +17,7 @@ const router = express.Router();
 
 router.get("/", getAllCars);
 router.get("/:id", getCar);
-router.post("/", upload.single("avatar"), addCar); // Middleware upload.single('avatar')
+router.post("/",authenticateToken, authorizeAdmin, upload.single("avatar"), addCar);
 router.put(
   "/:id",
   authenticateToken,

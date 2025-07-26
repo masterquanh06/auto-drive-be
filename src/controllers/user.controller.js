@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { createUser, findUserByUserName, findUserById, updateUser, deleteUser } from "../models/user.model.js";
+import { createUser, findUserByUserName, getAllUser } from "../models/user.model.js";
 export const register = async (req, res) => {
     const { username, password, email } = req.body;
     try {
@@ -35,7 +36,14 @@ export const login = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 }
-
+export const getAllUsers = async (req, res) => { 
+    try { 
+        const users = await getAllUser(); 
+        res.json(users); 
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+}
 export const getMe = (req, res) => {
     const { id, username, avatar, email, role } = req.user;
     res.json({ id, username, avatar, email, role }); // Trả về user info đã decode từ token
